@@ -1,3 +1,3 @@
 # capstoner
 
-This for capstone react tings. Viewer discretions advised. Very disgusting code.
+This for capstone react tings. Viewers' discretion's advised. Very disgusting code.
