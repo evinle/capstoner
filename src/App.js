@@ -1,23 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Map from "./map/Map";
+import React from "react";
+import * as Locations from "./map/locations";
+import { FlyToInterpolator } from "react-map-gl";
 
 function App() {
+  const [viewState, setViewState] = React.useState({
+    ...Locations.Joondalup,
+  });
+
+  const handleViewStateChange = ({ viewState }) => {
+    setViewState({
+      ...viewState,
+    });
+  };
+
+  const handleSwitchCity = (newViewState) => {
+    setViewState({
+      ...viewState,
+      ...newViewState,
+      transitionDuration: 2000,
+      transitionInterpolator: new FlyToInterpolator(),
+    });
+  };
+
+  const MajorNodes = () => {
+    return Object.keys(Locations).map((key) => {
+      return (
+        <button key={key} onClick={() => handleSwitchCity(Locations[key])}>
+          {key}
+        </button>
+      );
+    });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="map-container">
+      <Map
+        width="100vw"
+        height="100vh"
+        viewState={viewState}
+        onViewStateChange={handleViewStateChange}
+      />
+      <MajorNodes />
     </div>
   );
 }
