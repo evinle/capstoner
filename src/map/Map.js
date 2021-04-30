@@ -1,5 +1,6 @@
 import React from "react";
 import ReactMap from "react-map-gl";
+// eslint-disable-next-line
 import GeoJson from "../gadm36_AUS_2.json";
 import DeckGL from "@deck.gl/react";
 import * as Locations from "./locations";
@@ -111,6 +112,7 @@ const Map = ({ height, width, viewState, onViewStateChange }) => {
     onClick: (d) => console.log(d.object.properties.population),
   });
 
+  // eslint-disable-next-line
   const scatterplotLaya = new ScatterplotLayer({
     id: "scatterplot-laya",
     data: locArrayConst,
@@ -162,7 +164,8 @@ const Map = ({ height, width, viewState, onViewStateChange }) => {
   return (
     <div style={{ position: "relative" }}>
       <ReactMap
-        mapboxApiAccessToken="pk.eyJ1IjoiaW1ldmlubGUiLCJhIjoiY2tucTRwcWR1MWxlYzJ2bzV5bDllMnV4YiJ9.cblBKznaEeK5MCTSECSokg"
+        // mapboxApiAccessToken="pk.eyJ1IjoiaW1ldmlubGUiLCJhIjoiY2tucTRwcWR1MWxlYzJ2bzV5bDllMnV4YiJ9.cblBKznaEeK5MCTSECSokg"
+        mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
         width={width}
         height={height}
         viewState={viewState}

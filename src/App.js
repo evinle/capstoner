@@ -6,7 +6,10 @@ import { FlyToInterpolator } from "react-map-gl";
 
 function App() {
   const [viewState, setViewState] = React.useState({
-    ...Locations.Joondalup,
+    ...Locations.Perth,
+    zoom: 5,
+    pitch: 40,
+    bearing: 0,
   });
 
   const handleViewStateChange = ({ viewState }) => {
