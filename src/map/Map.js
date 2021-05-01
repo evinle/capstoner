@@ -7,6 +7,7 @@ import * as Locations from "./locations";
 import { ScatterplotLayer, GeoJsonLayer } from "@deck.gl/layers";
 import { HexagonLayer } from "@deck.gl/aggregation-layers";
 import Suburbs from "./subs.json";
+import RoadNetwork from "../Road_Network.geojson";
 
 const Map = ({ height, width, viewState, onViewStateChange }) => {
   const locNameArray = [...Object.keys(Locations)];
@@ -88,11 +89,12 @@ const Map = ({ height, width, viewState, onViewStateChange }) => {
   const geoJsonLaya = new GeoJsonLayer({
     id: "geojson-layer",
     data: { type: "FeatureCollection", features: [...suburbsArray] },
+    //data: RoadNetwork,
     pickable: true,
     stroked: true,
     filled: true,
     extruded: true,
-    lineWidthScale: 20,
+    lineWidthScale: 1,
     lineWidthMinPixels: 2,
     getFillColor: (d) => [
       ((d.properties.population / maxPopulation.current) * 255) % 256,
@@ -106,8 +108,10 @@ const Map = ({ height, width, viewState, onViewStateChange }) => {
       255,
       255,
     ],
+    // getLineColor: [255, 91, 17],
+    // getFillColor: [255, 91, 17],
     getRadius: 100,
-    getLineWidth: 10,
+    getLineWidth: 2,
     getElevation: 3,
     onClick: (d) => console.log(d.object.properties.population),
   });
