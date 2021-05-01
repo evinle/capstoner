@@ -1,65 +1,60 @@
 import React from "react";
 import ReactMap from "react-map-gl";
-// eslint-disable-next-line
-import GeoJson from "../gadm36_AUS_2.json";
 import DeckGL from "@deck.gl/react";
-import * as Locations from "./locations";
-import { ScatterplotLayer, GeoJsonLayer } from "@deck.gl/layers";
+// import * as Locations from "./locations";
+// import { ScatterplotLayer, GeoJsonLayer } from "@deck.gl/layers";
 import { HexagonLayer } from "@deck.gl/aggregation-layers";
-import Suburbs from "./subs.json";
-import RoadNetwork from "../Road_Network.geojson";
+// import Suburbs from "./subs.json";
 
 const Map = ({ height, width, viewState, onViewStateChange }) => {
-  const locNameArray = [...Object.keys(Locations)];
-  let locArray = [];
-  locNameArray.forEach((e) => {
-    locArray = [...locArray, Locations[e]];
-  });
+  // const locNameArray = [...Object.keys(Locations)];
+  // let locArray = [];
+  // locNameArray.forEach((e) => {
+  //   locArray = [...locArray, Locations[e]];
+  // });
 
-  const locArrayConst = locArray;
+  // // const locArrayConst = locArray;
 
-  locArray = Suburbs.features;
+  // locArray = Suburbs.features;
 
-  // Suburbs.features.filter((sub) => sub.properties.loc_pid.split("WA") > 5999)
+  // const suburbsArray = locArray.filter((entry) => {
+  //   return (
+  //     (entry.properties.wa_local_2 === "PERTH") |
+  //     (entry.properties.wa_local_2 === "ROCKINGHAM") |
+  //     (entry.properties.wa_local_2 === "JOONDALUP")
+  //   );
+  // });
 
-  const suburbsArray = locArray.filter((entry) => {
-    return (
-      (entry.properties.wa_local_2 === "PERTH") |
-      (entry.properties.wa_local_2 === "ROCKINGHAM") |
-      (entry.properties.wa_local_2 === "JOONDALUP")
-    );
-  });
-
-  const maxPopulation = React.useRef(0);
+  // const maxPopulation = React.useRef(0);
 
   const citiesWa = React.useRef({});
 
   const tooltip = React.useRef();
 
-  suburbsArray.forEach((entry) => {
-    fetch(
-      `https://public.opendatasoft.com/api/records/1.0/search/?dataset=worldcitiespop&q=&facet=country&refine.country=au&refine.city=${entry.properties.wa_local_2.toLowerCase()}` //name of city
-    )
-      .then((rawData) => rawData.json())
-      .then((data) => {
-        return new Promise((resolve, reject) => {
-          if (data.nhits > 0) {
-            if (data.records[0].fields.population > maxPopulation.current) {
-              maxPopulation.current = data.records[0].fields.population;
-            }
-            resolve(data.records[0].fields.population);
-          } else {
-            resolve(0);
-          }
-        });
-      })
-      .then((data) => {
-        entry.properties.population = data;
-      })
-      .catch((err) => console.log(err));
-  });
+  // const ting = suburbsArray.forEach((entry) => {
+  //   fetch(
+  //     `https://public.opendatasoft.com/api/records/1.0/search/?dataset=worldcitiespop&q=&facet=country&refine.country=au&refine.city=${entry.properties.wa_local_2.toLowerCase()}` //name of city
+  //   )
+  //     .then((rawData) => rawData.json())
+  //     .then((data) => {
+  //       return new Promise((resolve, reject) => {
+  //         if (data.nhits > 0) {
+  //           if (data.records[0].fields.population > maxPopulation.current) {
+  //             maxPopulation.current = data.records[0].fields.population;
+  //           }
+  //           resolve(data.records[0].fields.population);
+  //         } else {
+  //           resolve(0);
+  //         }
+  //       });
+  //     })
+  //     .then((data) => {
+  //       entry.properties.population = data;
+  //     })
+  //     .catch((err) => console.log(err));
+  // });
 
-  React.memo(() => console.log(suburbsArray), [suburbsArray]);
+  // React.memo(() => console.log(suburbsArray), [suburbsArray]);
 
   React.useEffect(() => {
     fetch(
@@ -75,59 +70,47 @@ const Map = ({ height, width, viewState, onViewStateChange }) => {
       .catch((err) => console.log(err));
   }, []);
 
-  // console.log(citiesWa.current);
-  // const citiesWithPopulationWA = citiesWA.filter(() =>{
-
-  // })
-
-  // citiesWa.current.filter((city) => {
-  //   return city.fields.population > 0;
+  // const geoJsonLaya = new GeoJsonLayer({
+  //   id: "geojson-layer",
+  //   data: { type: "FeatureCollection", features: [...suburbsArray] },
+  //   //data: RoadNetwork,
+  //   pickable: true,
+  //   stroked: true,
+  //   filled: true,
+  //   extruded: true,
+  //   lineWidthScale: 1,
+  //   lineWidthMinPixels: 2,
+  //   getFillColor: (d) => [
+  //     ((d.properties.population / maxPopulation.current) * 255) % 256,
+  //     0,
+  //     0,
+  //     100,
+  //   ],
+  //   getLineColor: (d) => [
+  //     ((d.properties.population / maxPopulation.current) * 255) % 256,
+  //     255,
+  //     255,
+  //     255,
+  //   ],
+  //   // getLineColor: [255, 91, 17],
+  //   // getFillColor: [255, 91, 17],
+  //   getRadius: 100,
+  //   getLineWidth: 2,
+  //   getElevation: 3,
+  //   onClick: (d) => console.log(d.object.properties.population),
   // });
 
-  // console.log(citiesWa.current);
-
-  const geoJsonLaya = new GeoJsonLayer({
-    id: "geojson-layer",
-    data: { type: "FeatureCollection", features: [...suburbsArray] },
-    //data: RoadNetwork,
-    pickable: true,
-    stroked: true,
-    filled: true,
-    extruded: true,
-    lineWidthScale: 1,
-    lineWidthMinPixels: 2,
-    getFillColor: (d) => [
-      ((d.properties.population / maxPopulation.current) * 255) % 256,
-      0,
-      0,
-      100,
-    ],
-    getLineColor: (d) => [
-      ((d.properties.population / maxPopulation.current) * 255) % 256,
-      255,
-      255,
-      255,
-    ],
-    // getLineColor: [255, 91, 17],
-    // getFillColor: [255, 91, 17],
-    getRadius: 100,
-    getLineWidth: 2,
-    getElevation: 3,
-    onClick: (d) => console.log(d.object.properties.population),
-  });
-
-  // eslint-disable-next-line
-  const scatterplotLaya = new ScatterplotLayer({
-    id: "scatterplot-laya",
-    data: locArrayConst,
-    stroked: true,
-    filled: true,
-    getRadius: (d) => d.population,
-    radiusMaxPixels: 25,
-    radiusMinPixels: 5,
-    getPosition: (d) => [d.longitude, d.latitude],
-    getFillColor: (d) => [(d.population * 2) % 256, 110, 0, 175],
-  });
+  // const scatterplotLaya = new ScatterplotLayer({
+  //   id: "scatterplot-laya",
+  //   data: locArrayConst,
+  //   stroked: true,
+  //   filled: true,
+  //   getRadius: (d) => d.population,
+  //   radiusMaxPixels: 25,
+  //   radiusMinPixels: 5,
+  //   getPosition: (d) => [d.longitude, d.latitude],
+  //   getFillColor: (d) => [(d.population * 2) % 256, 110, 0, 175],
+  // });
 
   const layers = [
     new HexagonLayer({
@@ -148,8 +131,6 @@ const Map = ({ height, width, viewState, onViewStateChange }) => {
       },
       onHover: (d) => {
         if (d.object) {
-          // console.log(d);
-          // console.log(d.object.points[0].source.fields.city);
           tooltip.current.style.opacity = 0.9;
           tooltip.current.style.left = `${d.x}px`;
           tooltip.current.style.top = `${d.y}px`;
@@ -162,13 +143,12 @@ const Map = ({ height, width, viewState, onViewStateChange }) => {
         }
       },
     }),
-    geoJsonLaya,
+    // geoJsonLaya,
   ];
 
   return (
     <div style={{ position: "relative" }}>
       <ReactMap
-        // mapboxApiAccessToken="pk.eyJ1IjoiaW1ldmlubGUiLCJhIjoiY2tucTRwcWR1MWxlYzJ2bzV5bDllMnV4YiJ9.cblBKznaEeK5MCTSECSokg"
         mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
         width={width}
         height={height}
