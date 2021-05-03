@@ -5,6 +5,7 @@
   --map-background-col: #191a1a;
   --map-accent-col: #7f7f7f;
   --map-accent-col-dark: #343332;
+  --dark-red: #811331;
 }
 
 body {
@@ -12,6 +13,10 @@ body {
 }
 
 .map-container {
+  position: absolute;
+}
+
+.nav-sidebar {
   position: absolute;
 }
 
@@ -30,7 +35,7 @@ ul {
   align-items: center;
   text-decoration: none;
   transition: 200ms ease-in-out;
-  border-radius: 10px;
+  border-radius: 1rem;
   padding: 0.5rem 0rem;
   opacity: 0.9;
 }
@@ -41,9 +46,6 @@ ul {
   margin: 0.5em 0.5em;
 }
 
-.menu-toggle svg {
-  margin: 0em 0.5em;
-}
 .nav-sidebar-list {
   margin: 0;
   padding: 0;
@@ -56,7 +58,7 @@ ul {
   width: 3.5em;
   height: 100vh;
   z-index: 4;
-  border-radius: 0em 1em 0em 0em;
+  border-radius: 0em 1rem 0em 0em;
   opacity: 0.5;
   transition: color 250ms ease-in-out;
 }
@@ -106,4 +108,37 @@ button:first-of-type {
 
 button:last-of-type {
   margin-top: 4em;
+}
+
+/* Home page css */
+
+ul.general-stats-tab {
+  position: absolute;
+  margin: 0;
+  padding: 0em 1em;
+  height: 100vh;
+  width: 17em;
+  right: 0;
+  z-index: 4;
+  color: var(--map-accent-col-dark);
+  background-color: var(--map-accent-col);
+  opacity: 0.85;
+  transition: 200ms ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-weight: 600;
+  border-radius: 1rem 0rem 0rem 0rem;
+}
+
+ul.general-stats-tab > svg {
+  cursor: pointer;
+  align-self: flex-end;
+  color: var(--dark-red);
+}
+
+ul.general-stats-tab > li,
+svg {
+  margin: 1rem 0.25rem;
 }

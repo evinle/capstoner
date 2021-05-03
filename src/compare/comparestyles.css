@@ -1,0 +1,9 @@
+.compare-page-container {
+  width: 100vw;
+  height: 100vh;
+  display: absolute;
+}
+
+.second-map-container {
+  position: absolute;
+}

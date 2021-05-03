@@ -7,6 +7,8 @@ import { CgMenuGridO as MenuToggleIcon } from "react-icons/cg";
 import { options as SidebarOptions } from "./SidebarOptions";
 import { Route, NavLink, BrowserRouter } from "react-router-dom";
 import StatisticsPage from "./statistics/Statistics";
+import Home from "./Home";
+import ComparePage from "./compare/ComparePage";
 
 function App() {
   const [navbarOptions, setNavbarOptions] = React.useState([]);
@@ -16,18 +18,18 @@ function App() {
   }, []);
 
   // State management for view state of the map
-  const [viewState, setViewState] = React.useState({
-    ...Locations.Perth,
-    zoom: 5,
-    pitch: 40,
-    bearing: 0,
-  });
+  // const [viewState, setViewState] = React.useState({
+  //   ...Locations.Perth,
+  //   zoom: 5,
+  //   pitch: 40,
+  //   bearing: 0,
+  // });
 
-  const handleViewStateChange = ({ viewState }) => {
-    setViewState({
-      ...viewState,
-    });
-  };
+  // const handleViewStateChange = ({ viewState }) => {
+  //   setViewState({
+  //     ...viewState,
+  //   });
+  // };
 
   return (
     <>
@@ -51,15 +53,17 @@ function App() {
             })}
           </ul>
         </div>
-        <div className="map-container-app">
+        {/* <div className="map-container-app">
           <Map
             width="100vw"
             height="100vh"
             viewState={viewState}
             onViewStateChange={handleViewStateChange}
           />
-        </div>
+        </div> */}
+        <Route exact path="/" component={Home} />
         <Route path="/statistics" component={StatisticsPage} />
+        <Route path="/compare" component={ComparePage} />
       </BrowserRouter>
     </>
   );

@@ -8,7 +8,15 @@ import { HexagonLayer } from "@deck.gl/aggregation-layers";
 // import Suburbs from "./subs.json";
 import AUPopulationAtLocation from "../au-cities-population-location.json";
 
-const Map = ({ height, width, viewState, onViewStateChange, onClick }) => {
+const Map = ({
+  height,
+  width,
+  viewState,
+  onViewStateChange,
+  onClick,
+  areaOnClick,
+  style,
+}) => {
   // const locNameArray = [...Object.keys(Locations)];
   // let locArray = [];
   // locNameArray.forEach((e) => {
@@ -172,8 +180,10 @@ const Map = ({ height, width, viewState, onViewStateChange, onClick }) => {
     },
     getColorWeight: (d) => parseInt(d.population),
     onClick: (d) => {
-      if (d) {
-        console.log(d);
+      if (areaOnClick) {
+        if (d.object.points[0].source) {
+          areaOnClick(d.object.points[0].source);
+        }
       }
     },
     onHover: (d) => {
@@ -196,7 +206,7 @@ const Map = ({ height, width, viewState, onViewStateChange, onClick }) => {
   const layers = [populationHexagonLayer];
 
   return (
-    <div className="map-container" onClick={onClick}>
+    <div className="map-container" onClick={onClick} style={style}>
       <ReactMap
         mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
         mapStyle="mapbox://styles/mapbox/dark-v10"
