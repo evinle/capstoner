@@ -1,3 +1,4 @@
+import "./mapstyles.css";
 import React from "react";
 import ReactMap from "react-map-gl";
 import DeckGL from "@deck.gl/react";
@@ -5,8 +6,9 @@ import DeckGL from "@deck.gl/react";
 // import { ScatterplotLayer, GeoJsonLayer } from "@deck.gl/layers";
 import { HexagonLayer } from "@deck.gl/aggregation-layers";
 // import Suburbs from "./subs.json";
+import AUPopulationAtLocation from "../au-cities-population-location.json";
 
-const Map = ({ height, width, viewState, onViewStateChange }) => {
+const Map = ({ height, width, viewState, onViewStateChange, onClick }) => {
   // const locNameArray = [...Object.keys(Locations)];
   // let locArray = [];
   // locNameArray.forEach((e) => {
@@ -26,10 +28,6 @@ const Map = ({ height, width, viewState, onViewStateChange }) => {
   // });
 
   // const maxPopulation = React.useRef(0);
-
-  const citiesWa = React.useRef({});
-
-  const tooltip = React.useRef();
 
   // const ting = suburbsArray.forEach((entry) => {
   //   fetch(
@@ -55,20 +53,6 @@ const Map = ({ height, width, viewState, onViewStateChange }) => {
   // });
 
   // React.memo(() => console.log(suburbsArray), [suburbsArray]);
-
-  React.useEffect(() => {
-    fetch(
-      "https://public.opendatasoft.com/api/records/1.0/search/?dataset=worldcitiespop&q=&rows=20&sort=population&facet=country&refine.country=au&refine.region=08"
-    )
-      .then((data) => data.json())
-      .then((data) => {
-        console.log("Data: " + data);
-        citiesWa.current = data.records.filter((city) => {
-          return typeof city.fields.population !== "undefined";
-        });
-      })
-      .catch((err) => console.log(err));
-  }, []);
 
   // const geoJsonLaya = new GeoJsonLayer({
   //   id: "geojson-layer",
@@ -112,44 +96,110 @@ const Map = ({ height, width, viewState, onViewStateChange }) => {
   //   getFillColor: (d) => [(d.population * 2) % 256, 110, 0, 175],
   // });
 
-  const layers = [
-    new HexagonLayer({
-      id: "hexagon-layer",
-      data: citiesWa.current,
-      pickable: true,
-      extruded: true,
-      radius: 20000,
-      getRadius: 10,
-      elevationScale: 500,
-      getPosition: (d) => [d.fields.longitude, d.fields.latitude],
-      getElevationWeight: (d) => d.fields.population,
-      getColorWeight: (d) => d.fields.population,
-      onClick: ({ object }) => {
-        if (object.points[0].source) {
-          console.log(object.points[0].source);
-        }
-      },
-      onHover: (d) => {
-        if (d.object) {
-          tooltip.current.style.opacity = 0.9;
-          tooltip.current.style.left = `${d.x}px`;
-          tooltip.current.style.top = `${d.y}px`;
-          tooltip.current.innerHTML = `<h2>${d.object.points[0].source.fields.city.toUpperCase()}</h2>
-          <p>Population: ${d.object.points[0].source.fields.population}</p>`;
-        } else {
-          tooltip.current.style.opacity = 0.0;
-          tooltip.current.style.left = `0px`;
-          tooltip.current.style.top = `0px`;
-        }
-      },
-    }),
-    // geoJsonLaya,
-  ];
+  // const layers = [
+  //   new HexagonLayer({
+  //     id: "hexagon-layer",
+  //     data: citiesWa.current,
+  //     pickable: true,
+  //     extruded: true,
+  //     radius: 20000,
+  //     getRadius: 10,
+  //     elevationScale: 500,
+  //     getPosition: (d) => [d.fields.longitude, d.fields.latitude],
+  //     getElevationWeight: (d) => d.fields.population,
+  //     getColorWeight: (d) => d.fields.population,
+  //     onClick: ({ object }) => {
+  //       if (object.points[0].source) {
+  //         console.log(object.points[0].source);
+  //       }
+  //     },
+  //     onHover: (d) => {
+  //       if (d.object) {
+  //         tooltip.current.style.opacity = 0.9;
+  //         tooltip.current.style.left = `${d.x}px`;
+  //         tooltip.current.style.top = `${d.y}px`;
+  //         tooltip.current.innerHTML = `<h2>${d.object.points[0].source.fields.city.toUpperCase()}</h2>
+  //       <p>Population: ${d.object.points[0].source.fields.population}</p>`;
+  //       } else {
+  //         tooltip.current.style.opacity = 0.0;
+  //         tooltip.current.style.left = `0px`;
+  //         tooltip.current.style.top = `0px`;
+  //       }
+  //     },
+  //   }),
+  // geoJsonLaya,
+  // ];
+
+  // const citiesWa = React.useRef({});
+
+  // React.useEffect(() => {
+  //   fetch(
+  //     "https://public.opendatasoft.com/api/records/1.0/search/?dataset=worldcitiespop&q=&rows=20&sort=population&facet=country&refine.country=au&refine.region=08"
+  //   )
+  //     .then((data) => data.json())
+  //     .then((data) => {
+  //       console.log("Data: " + data);
+  //       citiesWa.current = data.records.filter((city) => {
+  //         return typeof city.fields.population !== "undefined";
+  //       });
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
+
+  const tooltip = React.useRef();
+
+  const hexagonLayerData = AUPopulationAtLocation;
+
+  // hexagon materials
+  const mats = {
+    ambient: 0.5,
+    diffuse: 0.3,
+    shininess: 100,
+    specularColor: [100, 30, 30],
+  };
+
+  const populationHexagonLayer = new HexagonLayer({
+    id: "hexagon-layer",
+    data: hexagonLayerData,
+    pickable: true,
+    extruded: true,
+    radius: 2000,
+    getRadius: 10,
+    elevationScale: 500,
+    getPosition: (d) => [parseFloat(d.lng), parseFloat(d.lat)],
+    getElevationWeight: (d) => {
+      return parseInt(d.population);
+    },
+    getColorWeight: (d) => parseInt(d.population),
+    onClick: (d) => {
+      if (d) {
+        console.log(d);
+      }
+    },
+    onHover: (d) => {
+      if (d.object) {
+        tooltip.current.style.opacity = 0.9;
+        tooltip.current.style.left = `${d.x}px`;
+        tooltip.current.style.top = `${d.y}px`;
+        tooltip.current.innerHTML = `<h2>${d.object.points[0].source.city.toUpperCase()}</h2>
+          <p>Population: ${d.object.points[0].source.population}<br></p>
+          `;
+      } else {
+        tooltip.current.style.opacity = 0.0;
+        tooltip.current.style.left = `-200px`;
+        tooltip.current.style.top = `-200px`;
+      }
+    },
+    material: mats,
+  });
+
+  const layers = [populationHexagonLayer];
 
   return (
-    <div style={{ position: "relative" }}>
+    <div className="map-container" onClick={onClick}>
       <ReactMap
         mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
+        mapStyle="mapbox://styles/mapbox/dark-v10"
         width={width}
         height={height}
         viewState={viewState}
@@ -157,17 +207,8 @@ const Map = ({ height, width, viewState, onViewStateChange }) => {
       >
         <DeckGL viewState={viewState} layers={layers} />
       </ReactMap>
-      <div
-        ref={tooltip}
-        style={{
-          display: "block",
-          position: "absolute",
-          userSelect: "none",
-          background: "white",
-          padding: "10px",
-          borderRadius: "10px",
-        }}
-      ></div>
+      {/* this is our tooltip box for when the user hovers over the hexagons */}
+      <div ref={tooltip} className="map-tooltip"></div>
     </div>
   );
 };

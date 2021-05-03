@@ -1,0 +1,13 @@
+.map-tooltip {
+  position: absolute;
+  display: block;
+  user-select: none;
+  background-color: white;
+  padding: 0em 2em;
+  border-radius: 1em;
+  text-align: center;
+}
+
+.map-container {
+  position: absolute;
+}
