@@ -1,5 +1,5 @@
 .map-tooltip {
-  position: absolute;
+  position: fixed;
   display: block;
   user-select: none;
   background-color: white;

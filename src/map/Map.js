@@ -200,6 +200,14 @@ const Map = ({
         tooltip.current.style.top = `-200px`;
       }
     },
+    onDrag: () => {
+      if (tooltip.current.style.opacity === 0.0) {
+        return;
+      }
+      tooltip.current.style.opacity = 0.0;
+      tooltip.current.style.left = `-200px`;
+      tooltip.current.style.top = `-200px`;
+    },
     material: mats,
   });
 

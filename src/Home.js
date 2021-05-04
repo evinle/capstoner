@@ -14,6 +14,8 @@ function Home() {
     bearing: 0,
   });
 
+  const interp = new FlyToInterpolator();
+
   const [chosenArea, setChosenArea] = React.useState({});
   const [showAreaStats, setShowAreaStats] = React.useState(false);
 
@@ -33,29 +35,32 @@ function Home() {
       pitch: 40,
       bearing: 0,
       transitionDuration: 7500 * (1 / viewState.zoom),
-      transitionInterpolator: new FlyToInterpolator(),
+      transitionInterpolator: interp,
     });
   };
 
   return (
     <>
-      {showAreaStats && (
-        <ul className="general-stats-tab">
-          <FaWindowClose
-            className="close-stats-btn"
-            size={40}
-            onClick={() => setShowAreaStats(false)}
-          />
+      <ul
+        className={
+          showAreaStats ? "general-stats-tab" : "general-stats-tab closed"
+        }
+      >
+        <FaWindowClose
+          className="close-stats-btn"
+          size={40}
+          onClick={() => setShowAreaStats(false)}
+        />
 
-          {Object.keys(chosenArea).map((stat) => {
-            return (
-              <li>{`${stat.charAt(0).toUpperCase()}${stat.slice(1)} : ${
-                chosenArea[stat]
-              }`}</li>
-            );
-          })}
-        </ul>
-      )}
+        {Object.keys(chosenArea).map((stat) => {
+          return (
+            <li>{`${stat.charAt(0).toUpperCase()}${stat.slice(1)} : ${
+              chosenArea[stat]
+            }`}</li>
+          );
+        })}
+      </ul>
+
       <div className="map-container-app">
         <Map
           width="100vw"
