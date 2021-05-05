@@ -1,9 +1,5 @@
 import "./App.css";
-import Map from "./map/Map";
 import React from "react";
-import * as Locations from "./map/locations";
-import { FlyToInterpolator } from "react-map-gl";
-import { CgMenuGridO as MenuToggleIcon } from "react-icons/cg";
 import { options as SidebarOptions } from "./SidebarOptions";
 import { Route, NavLink, BrowserRouter } from "react-router-dom";
 import StatisticsPage from "./statistics/Statistics";
@@ -17,22 +13,10 @@ function App() {
     setNavbarOptions(SidebarOptions);
   }, []);
 
-  // State management for view state of the map
-  // const [viewState, setViewState] = React.useState({
-  //   ...Locations.Perth,
-  //   zoom: 5,
-  //   pitch: 40,
-  //   bearing: 0,
-  // });
-
-  // const handleViewStateChange = ({ viewState }) => {
-  //   setViewState({
-  //     ...viewState,
-  //   });
-  // };
-
   return (
     <>
+      {/* Browser Routers gonna be our main method for nagivation betweeen 
+    components of our spa */}
       <BrowserRouter>
         <div className="nav-sidebar">
           <ul className="nav-sidebar-list">
@@ -42,6 +26,9 @@ function App() {
                   className="menu-toggle menu-option-container"
                   key={option.id}
                 >
+                  {/* our nav links consists of an icon and some text describing the 
+                  action which can be hidden if the nav bar is not hovered through
+                  some css transition and on hover pseudo element */}
                   <NavLink to={option.path} className="menu-option">
                     {option.icon}
                     <span className="menu-option-label">
@@ -53,14 +40,6 @@ function App() {
             })}
           </ul>
         </div>
-        {/* <div className="map-container-app">
-          <Map
-            width="100vw"
-            height="100vh"
-            viewState={viewState}
-            onViewStateChange={handleViewStateChange}
-          />
-        </div> */}
         <Route exact path="/" component={Home} />
         <Route path="/statistics" component={StatisticsPage} />
         <Route path="/compare" component={ComparePage} />

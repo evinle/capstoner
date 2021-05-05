@@ -81,7 +81,7 @@ span.menu-option-label {
 
 .nav-sidebar-list:hover span.menu-option-label {
   display: block;
-  transition-delay: 100ms;
+  /* transition-delay: 100ms; */
   width: 100%;
   text-align: center;
   margin: 0rem 2rem;
@@ -128,7 +128,7 @@ ul.general-stats-tab {
   opacity: 0.85;
   transition: transform 250ms var(--transition-function),
     opacity 200ms var(--transition-function);
-
+  transition-delay: 100ms;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -141,6 +141,11 @@ ul.general-stats-tab > svg {
   cursor: pointer;
   align-self: flex-end;
   color: var(--dark-red);
+  transition: opacity 150ms var(--transition-function);
+}
+
+ul.general-stats-tab > svg:hover {
+  opacity: 0.5;
 }
 
 ul.general-stats-tab > li,

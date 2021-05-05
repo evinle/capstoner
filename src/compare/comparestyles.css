@@ -4,6 +4,7 @@
   display: absolute;
 }
 
+.first-map-container,
 .second-map-container {
   position: absolute;
 }

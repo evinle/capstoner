@@ -14,17 +14,23 @@ function Home() {
     bearing: 0,
   });
 
-  const interp = new FlyToInterpolator();
+  const interp = new FlyToInterpolator({ speed: 0.85 });
 
+  // area/hexagon the user clicks on the map
   const [chosenArea, setChosenArea] = React.useState({});
+
+  // this state determines if we're showing the general stats for an area or not
   const [showAreaStats, setShowAreaStats] = React.useState(false);
 
+  // when the user wants to move, this function will be called to update the
+  // viewstate based on their input
   const handleViewStateChange = ({ viewState }) => {
     setViewState({
       ...viewState,
     });
   };
 
+  // fancy fly-to logic to enable our map to fly to a town the user's clicked
   const handleAreaClick = (area) => {
     setShowAreaStats(true);
     setChosenArea(area);
@@ -33,14 +39,17 @@ function Home() {
       latitude: parseFloat(area.lat),
       zoom: 9,
       pitch: 40,
-      bearing: 0,
-      transitionDuration: 7500 * (1 / viewState.zoom),
+      bearing: viewState.bearing,
+      // we want the transition duration to be inversely proportional to the
+      // zoom i.e if the user's really zoomed in, we want that time to be smaller
+      transitionDuration: 7500 / viewState.zoom,
       transitionInterpolator: interp,
     });
   };
 
   return (
     <>
+      {/* we do this instead of the && syntax to enable transitions  */}
       <ul
         className={
           showAreaStats ? "general-stats-tab" : "general-stats-tab closed"
@@ -54,9 +63,10 @@ function Home() {
 
         {Object.keys(chosenArea).map((stat) => {
           return (
-            <li>{`${stat.charAt(0).toUpperCase()}${stat.slice(1)} : ${
-              chosenArea[stat]
-            }`}</li>
+            // logic to display all the key value pairs in the object
+            <li key={stat}>{`${stat.charAt(0).toUpperCase()}${stat.slice(
+              1
+            )} : ${chosenArea[stat]}`}</li>
           );
         })}
       </ul>
@@ -65,7 +75,13 @@ function Home() {
         <Map
           width="100vw"
           height="100vh"
-          chosenArea={chosenArea}
+          //areaOnClick is the handler we pass in for when the user
+          // clicks on a town/hexagon. Since we want to be able to
+          // extract information from the clicked object and display it
+          // on the page on top of the map, we implement the logic here
+          // instead of inside the map component itself. We also don't
+          // want this to be a generic function of the map but rather
+          // a feature of this "Home" component
           areaOnClick={handleAreaClick}
           viewState={viewState}
           onViewStateChange={handleViewStateChange}
