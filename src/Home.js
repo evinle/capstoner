@@ -30,40 +30,6 @@ function Home() {
     });
   };
 
-  //  const determineZoom = () => {
-  //     if (!chosenArea.demand || !chosenArea.supply) return 12;
-
-  //     console.log(
-  //       "determined zoom: ",
-  //       14 -
-  //         Math.max(
-  //           Object.keys(chosenArea.demand.food).reduce(
-  //             (total, current) => total + chosenArea.demand.food[current],
-  //             0
-  //           ),
-  //           Object.keys(chosenArea.supply.food).reduce(
-  //             (total, current) => total + chosenArea.demand.food[current],
-  //             0
-  //           )
-  //         ) /
-  //           9000
-  //     );
-  //     return (
-  //       14 -
-  //       Math.max(
-  //         Object.keys(chosenArea.demand.food).reduce(
-  //           (total, current) => total + chosenArea.demand.food[current],
-  //           0
-  //         ),
-  //         Object.keys(chosenArea.supply.food).reduce(
-  //           (total, current) => total + chosenArea.demand.food[current],
-  //           0
-  //         )
-  //       ) /
-  //         9000
-  //     );
-  //   };
-
   // fancy fly-to logic to enable our map to fly to a town the user's clicked
   const handleAreaClick = (area) => {
     setShowAreaStats(true);
@@ -76,7 +42,7 @@ function Home() {
       bearing: viewState.bearing,
       // we want the transition duration to be inversely proportional to the
       // zoom i.e if the user's really zoomed in, we want that time to be smaller
-      transitionDuration: 10000 / viewState.zoom,
+      transitionDuration: 7500 / viewState.zoom,
       transitionInterpolator: interp,
     });
   };

@@ -81,16 +81,16 @@ const Map = ({
     pickable: true,
     radius: 200,
     extruded: true,
-    getPosition: (d) => [parseFloat(d._long), parseFloat(d.lat)],
-    getElevationValue: (d) => {
-      return (
-        d[0].supply.food.meat +
-        d[0].supply.food.carbs +
-        d[0].supply.food.vegetables +
-        d[0].supply.food.fruits
-      );
+    radius: 2000,
+    getRadius: 10,
+    elevationScale: 500,
+    // d is just the data in this case
+    getPosition: (d) => [parseFloat(d.lng), parseFloat(d.lat)],
+    getElevationWeight: (d) => {
+      return parseInt(d.population);
     },
-    colorRange: [[220, 122, 30]],
+    getColorWeight: (d) => parseInt(d.population),
+    // d also stands for Da-click-event here
     onClick: (d) => {
       if (areaOnClick) {
         if (d.object.points[0].source) {
