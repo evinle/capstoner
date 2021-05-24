@@ -28,7 +28,7 @@ export const options = [
     id: "4",
     icon: <GiPlayerTime size={ICON_SIZE} />,
     label: "simulate",
-    path: "simulate",
+    path: "/simulate",
   },
   {
     id: "5",

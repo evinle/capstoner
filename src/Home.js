@@ -4,6 +4,8 @@ import React from "react";
 import * as Locations from "./map/locations";
 import { FaWindowClose } from "react-icons/fa";
 import { FlyToInterpolator } from "react-map-gl";
+import { NavLink } from "react-router-dom";
+import { ImStatsDots } from "react-icons/im";
 
 function Home() {
   // State management for view state of the map
@@ -80,6 +82,12 @@ function Home() {
             } ]`}</li>
           );
         })}
+        <li key="toStatsBtn" className="stats-tab-nav">
+          <NavLink to="/statistics">
+            <ImStatsDots />
+            <span className="nav-label">Show area statistics</span>
+          </NavLink>
+        </li>
       </ul>
 
       <div className="map-container-app">
