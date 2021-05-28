@@ -3,9 +3,14 @@ import Map from "./map/Map";
 import React from "react";
 import * as Locations from "./map/locations";
 import { FaWindowClose } from "react-icons/fa";
-import { FlyToInterpolator } from "react-map-gl";
+import ReactMap, { FlyToInterpolator, WebMercatorViewport } from "react-map-gl";
 import { NavLink } from "react-router-dom";
 import { ImStatsDots } from "react-icons/im";
+// import { OrthographicView } from "@deck.gl/core";
+import DeckGL from "@deck.gl/react";
+import { ScatterplotLayer } from "@deck.gl/layers";
+import AUPopulationAtLocation from "./GeoFeature.json";
+import { RiSettings5Fill as SettingsIcon } from "react-icons/ri";
 
 function Home() {
   // State management for view state of the map
@@ -15,6 +20,24 @@ function Home() {
     pitch: 40,
     bearing: 0,
   });
+
+  const [topdownView, setTopdownView] = React.useState(
+    new WebMercatorViewport({
+      ...viewState,
+      pitch: 0,
+      bearing: 0,
+    })
+  );
+
+  const [showMinimap, setShowMinimap] = React.useState(true);
+
+  const [dataDisplayMode, setDataDisplayMode] = React.useState("both");
+
+  const hexagonLayerData = AUPopulationAtLocation;
+
+  const totalPopulation = AUPopulationAtLocation.reduce(
+    (total, current) => (total += current)
+  );
 
   const interp = new FlyToInterpolator({ speed: 0.85 });
 
@@ -30,7 +53,21 @@ function Home() {
     setViewState({
       ...viewState,
     });
+    setTopdownView(
+      new WebMercatorViewport({
+        latitude: viewState.latitude,
+        longitude: viewState.longitude,
+        zoom: viewState.zoom - 2,
+        pitch: 0,
+        bearing: 0,
+      })
+    );
   };
+
+  // var topdownView = new OrthographicView({
+  //   id: "orthographic-view",
+  //   controller: true,
+  // });
 
   // fancy fly-to logic to enable our map to fly to a town the user's clicked
   const handleAreaClick = (area) => {
@@ -49,6 +86,45 @@ function Home() {
     });
   };
 
+  const handleMinimapSelect = (d) => {
+    setShowMinimap(!showMinimap);
+  };
+
+  const handleDisplaySelect = (e) => {
+    setDataDisplayMode(e.target.value);
+  };
+
+  const scatterplotForm = new ScatterplotLayer({
+    id: "scatterplot-layer",
+    data: hexagonLayerData,
+    pickable: true,
+    opacity: 0.8,
+    stroked: true,
+    filled: true,
+    radiusScale: 200,
+    radiusMinPixels: 3,
+    radiusMaxPixels: 10,
+    lineWidthMinPixels: 1,
+    getPosition: (d) => [parseFloat(d._long), parseFloat(d.lat)],
+    getRadius: (d) => d.population / totalPopulation,
+    getFillColor: (d) =>
+      d.demand.food.meat +
+        d.demand.food.carbs +
+        d.demand.food.vegetables +
+        d.demand.food.fruits >
+      d.supply.food.meat +
+        d.supply.food.carbs +
+        d.supply.food.vegetables +
+        d.supply.food.fruits
+        ? [255, 0, 0]
+        : [0, 255, 0],
+    getLineColor: [0, 0, 0, 0],
+    onClick: (d) => {
+      console.log(d);
+      handleAreaClick(d.object);
+    },
+    // d.object.points ? setChosenArea(d.object.points[0].source) : null,
+  });
   return (
     <>
       {/* we do this instead of the && syntax to enable transitions  */}
@@ -90,6 +166,31 @@ function Home() {
         </li>
       </ul>
 
+      <div className="settings-tab">
+        <div>
+          {/* <span className="settings-option-label">SETTINGS</span> */}
+          <SettingsIcon className="settings-wheel" size={40} />
+        </div>
+        <ul>
+          <li className="settings-option">
+            <label>Display </label>
+            <select onChange={handleDisplaySelect}>
+              <option value="both">Supply + Demand</option>
+              <option value="diff">Discrepancy</option>
+              <option value="supply">Supply</option>
+              <option value="demand">Demand</option>
+            </select>
+          </li>
+          <li className="settings-option">
+            <label>Minimap </label>
+            <select onChange={handleMinimapSelect}>
+              <option>Show</option>
+              <option>Hide</option>
+            </select>
+          </li>
+        </ul>
+      </div>
+
       <div className="map-container-app">
         <Map
           width="100vw"
@@ -104,7 +205,42 @@ function Home() {
           areaOnClick={handleAreaClick}
           viewState={viewState}
           onViewStateChange={handleViewStateChange}
+          displayMode={dataDisplayMode}
         />
+        <div className={showMinimap ? "minimap" : "minimap closed"}>
+          <ReactMap
+            {...topdownView}
+            mapboxApiAccessToken={process.env.REACT_APP_MAP_TOKEN}
+            width="15vw"
+            height="15vw"
+            showCompass={false}
+            showZoom={false}
+            captureDrag={false}
+          >
+            <DeckGL
+              viewState={topdownView}
+              layers={scatterplotForm}
+              getTooltip={(d) =>
+                d.object && {
+                  html: `<h2>${d.object.suburb}</h2>`,
+                  style: {
+                    fontSize: "0.5rem",
+                    backgroundColor: "#343332",
+                    color: "#7f7f7f",
+                    position: "relative",
+                    zIndex: 100,
+                    opacity: 0.9,
+                    textAlign: "center",
+                    padding: "0.2em 0.4em",
+                    maxWidth: "10em",
+                    minWidth: "auto",
+                    borderRadius: "1em",
+                  },
+                }
+              }
+            />
+          </ReactMap>
+        </div>
       </div>
     </>
   );
